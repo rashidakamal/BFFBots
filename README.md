@@ -1,5 +1,6 @@
 # BFFBots
-For ITP Understanding Networks
+
+**For ITP's Understanding Networks class.**
 
 Download the repo using `git clone https://github.com/rashidakamal/BFFBots.git`. Once you `cd` into the directory, you should `npm install` on Terminal, and then run the script using `node getPost.js`. 
 
