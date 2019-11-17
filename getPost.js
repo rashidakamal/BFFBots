@@ -11,6 +11,9 @@
 	17 Nov 2019
 */
 
+var clientA = []
+var clientB = []
+
 var express = require('express');			    // include express.js
 var server = express();						        // a local instance of it
 var bodyParser = require('body-parser');	// include body-parser
@@ -26,34 +29,38 @@ function serverStart() {
   console.log('Server listening on port '+ port);
 }
 
-// this is called by both GET and POST handlers,
-// to format a response to the request:
-function formatResponse(thisContent) {
-	var result = 'I will say:' + '\n' + thisContent.name;
-  	return result;
-}
 
-function handleGet (request, response) {
+function receiveStatement(request, response) {
 	console.log('got a GET request');
 	// the parameters of a GET request are passed in
 	// request.query. Pass that to formatResponse()
 	// for formatting:
-	var content = formatResponse(request.query);
-	console.log(content);
+	// var content = formatResponse(request.query);
+	// console.log(content);
+
+	var content = clientA[clientA.length-1];
+	console.log(clientA);
 
 	// send the response:
 	response.send(content);
 	response.end();
+	
 }
 
-function handleStatement(request, response) {
-	console.log('Got a POST request');
-	// the parameters of a GET request are passed in
-	// request.body. Pass that to formatResponse()
-	// for formatting:
-	var content = formatResponse(request.body);
-	console.log(content);
+function sendStatement(request, response) {
 
+	console.log('Got a POST request');
+	var msg = request.body.message; 
+	
+	// this implementation is only capturing text from clientA 
+	// (and in recieveStatement, only ClientB is listening)
+	// we could obviously change this. 
+	clientA.push(msg); 
+
+
+	var content = "Just sent your message!";
+
+	console.log("in sendStatement");
 	// send the response:
 	response.send(content);
 	response.end();
@@ -74,18 +81,15 @@ function handleDate(request, response) {
 
 function setEmotion(request, response) {
 	var content = 'The emotion you gave me is: ' ;
-	var emotion = request.params.emotion;
-	ages.push(age);
-	content += age;
+	var emotion = request.params.emotion; // not implemented yet... 
+
 	content += '\n';			// add a newline at the end of the content
 	response.send(content);	// send it back to the client
 	response.end();			// close the connection
 }
 
 function handleEmotion(request, response) {
-	var content = 'The last emotion you gave me is: ';
-	var age = ages[ages.length -1];
-	content += age;
+
 	content += '\n';			// add a newline at the end of the content
 	response.send(content);	// send it back to the client
 	response.end();			// close the connection
@@ -103,5 +107,6 @@ server.get('/date/', handleDate);
 // server.get('/emotion/', handleEmotion);
 // server.get('/emotion/:emotion', setEmotion);       
 
-server.get('/statement/', handleGet);    
-server.post('/statement/', handleStatement);  
+// server.get('/statement/', handleGet);    
+server.post('/send/', sendStatement);  
+server.get('/receive/', receiveStatement);   
